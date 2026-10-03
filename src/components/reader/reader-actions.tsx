@@ -10,10 +10,15 @@ interface ReaderActionsProps {
   title: string;
   /** Short supporting line passed to the native share sheet. */
   text: string;
-  /** Canonical URL of the tract. */
+  /** Canonical URL of the publication. */
   url: string;
   pdfHref?: string;
   pdfFileName?: string;
+  /** Offer the browser's print dialog. Off for books, whose PDF is the print edition. */
+  showPrint?: boolean;
+  showShare?: boolean;
+  /** Override the Share button's style (it is the primary action by default). */
+  shareVariant?: ButtonVariant;
   variant?: "stage" | "page" | "dock";
   className?: string;
 }
@@ -51,7 +56,7 @@ function useShare(title: string, text: string, url: string) {
   return { state, share };
 }
 
-export function ReaderActions({ title, text, url, pdfHref, pdfFileName, variant = "page", className }: ReaderActionsProps) {
+export function ReaderActions({ title, text, url, pdfHref, pdfFileName, showPrint = true, showShare = true, shareVariant, variant = "page", className }: ReaderActionsProps) {
   const { state, share } = useShare(title, text, url);
 
   const shareLabel = state === "copied" ? "Link copied" : state === "failed" ? "Copy failed" : "Share";
@@ -95,14 +100,18 @@ export function ReaderActions({ title, text, url, pdfHref, pdfFileName, variant 
 
   return (
     <div className={cn("no-print flex flex-wrap items-center gap-2.5", className)}>
-      <button type="button" onClick={share} className={buttonClasses(primary)}>
-        <ShareIcon aria-hidden="true" />
-        {shareLabel}
-      </button>
-      <button type="button" onClick={() => window.print()} className={buttonClasses(secondary)}>
-        <Printer aria-hidden="true" />
-        Print
-      </button>
+      {showShare ? (
+        <button type="button" onClick={share} className={buttonClasses(shareVariant ?? primary)}>
+          <ShareIcon aria-hidden="true" />
+          {shareLabel}
+        </button>
+      ) : null}
+      {showPrint ? (
+        <button type="button" onClick={() => window.print()} className={buttonClasses(secondary)}>
+          <Printer aria-hidden="true" />
+          Print
+        </button>
+      ) : null}
       {pdfHref ? (
         <a href={pdfHref} download={pdfFileName} className={buttonClasses(secondary)}>
           <Download aria-hidden="true" />

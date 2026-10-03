@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 
 import { PageIntro } from "@/components/layout/page-intro";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
+import { SharingNotice } from "@/components/sharing-notice";
 import { ButtonLink } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { pageMetadata } from "@/lib/seo";
@@ -85,6 +86,10 @@ export default async function AboutPage() {
             </p>
           </Reveal>
         </section>
+
+        <Reveal className="pb-16 sm:pb-24">
+          <SharingNotice id="sharing" className="mx-auto max-w-3xl sm:p-10" />
+        </Reveal>
 
         <Reveal className="flex flex-wrap items-center gap-3 border-t border-line pt-10">
           <ButtonLink href="/library">

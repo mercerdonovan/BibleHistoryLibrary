@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
     "/tracts/[slug]": ["./content/tracts/*.json"],
     "/search-index.json": ["./content/tracts/*.json"],
     "/opengraph-image": ["./src/assets/fonts/*.ttf"],
+    "/books/[book]": ["./content/books/**/*.json"],
+    "/books/[book]/read": ["./content/books/**/*.json"],
+    "/books/[book]/read/[chapter]": ["./content/books/**/*.json"],
+    "/books/[book]/opengraph-image": ["./src/assets/fonts/*.ttf", "./content/books/**/*.json", "./public/book-assets/*/cover.jpg"],
     "/tracts/[slug]/opengraph-image": ["./src/assets/fonts/*.ttf", "./content/tracts/*.json"],
   },
 };

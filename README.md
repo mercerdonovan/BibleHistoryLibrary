@@ -59,10 +59,45 @@ independent path and fails if any character or word boundary differs.
 The extractor also copies each PDF to `public/pdfs/<slug>.pdf` for the
 download button.
 
+## Books
+
+Books use the same two-layer model as tracts, with one file per chapter so no
+page ships the whole book.
+
+| Layer | Where |
+| --- | --- |
+| **Canonical book text** | `content/books/<slug>/book.json` (chapters, cover text) and `content/books/<slug>/chapters/NN-slug.json` |
+| **Pictures, cover, PDF** | `public/book-assets/<slug>/` (generated from the PDFs) |
+| **Presentation metadata** | `src/content/books.ts`: title, description, colours, picture alt text |
+
+Routes: `/books` (shelf) → `/books/<slug>` (about the book) →
+`/books/<slug>/read` (contents) → `/books/<slug>/read/<chapter>`.
+
+```bash
+.venv/bin/pip install pymupdf pillow
+.venv/bin/python scripts/extract_book.py
+.venv/bin/python scripts/verify_book.py
+```
+
+`extract_book.py` reads the two-column pages in order, keeps the boxed
+quotations and full-page pictures where they fall, and takes the front cover
+from the printed cover spread. `verify_book.py` checks every character, in
+order, against both the PDF and the original Pages document.
+
+**Line-end hyphens.** A printed line that ends in a hyphen may be a real
+compound ("ninety-five") or a word split by the layout ("punish-ment"). Each
+decision is listed in `content/books/<slug>/line-end-hyphens.txt`; entries
+marked `REVIEW` had no other instance in the book to confirm them. Change a
+decision in `KEEP_HYPHEN` at the top of `extract_book.py`.
+
+The reader remembers a visitor's place in `localStorage` only. Books are not
+yet included in the site search.
+
 ## Where things live
 
 ```
 content/tracts/          canonical tract text (generated)
+content/books/           canonical book text, one file per chapter (generated)
 scripts/                 PDF extraction + verification
 src/app/                 routes, metadata, sitemap, robots, share images
 src/config/site.ts       site name, URL, contact email, navigation
@@ -72,6 +107,7 @@ src/components/
   layout/                header, footer, navigation, theme
   tract/                 covers, cards, rails, index list
   reader/                tract body, progress, section nav, share/print/PDF
+  book/                  cover, chapter body, contents, progress, resume
   library/ search/       browsing and full-text search
   motion/                reveal primitives
 src/app/globals.css      design tokens, reading typography, print styles

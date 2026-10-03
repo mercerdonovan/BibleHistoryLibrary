@@ -1,0 +1,232 @@
+{
+  "slug": "end-times",
+  "sourcePdf": "PDF End Times 103 pages.pdf",
+  "coverPdf": "PDF End Times Cover.pdf",
+  "pageCount": 103,
+  "cover": {
+    "image": {
+      "src": "/book-assets/end-times/cover.jpg",
+      "width": 1700,
+      "height": 2200
+    },
+    "frontLines": [
+      "The End",
+      "Times",
+      "I am Coming Soon!",
+      "Bible",
+      "History",
+      "LIBRARY"
+    ],
+    "backCover": [
+      "The people of God are in Babylon. Many true Christians are still to be found in her communion.",
+      "Many are dissatisfied with their present position, and are longing for clearer light and truth. They look in vain for the image of Christ in the church.",
+      "As the churches depart more and more widely from the truth, and ally themselves more closely with the world, the time will come when those who fear and honor God can no longer remain in connection with them. Those that “believed not the truth, but had pleasure in unrighteousness,” will be left to receive “strong delusion,” and to “believe a lie.” 2 Thessalonians 2:11, 12.",
+      "But the light of truth will shine upon all whose hearts are open to receive it, and all the children of the Lord still in Babylon, will heed the call, “Come out of her, my people.” (Revelation 18:4)"
+    ],
+    "address": [
+      "Bible History Library",
+      "P.O. Box 77",
+      "Bitely, MI 49309"
+    ]
+  },
+  "chapters": [
+    {
+      "slug": "persecution-in-the-first-centuries",
+      "number": 1,
+      "label": "Chapter 1",
+      "title": "Persecution in the First Centuries",
+      "file": "01-persecution-in-the-first-centuries.json",
+      "startPage": 1,
+      "endPage": 5,
+      "wordCount": 3019,
+      "imageCount": 1
+    },
+    {
+      "slug": "the-roman-church",
+      "number": 2,
+      "label": "Chapter 2",
+      "title": "The Roman Church",
+      "file": "02-the-roman-church.json",
+      "startPage": 6,
+      "endPage": 10,
+      "wordCount": 3791,
+      "imageCount": 0
+    },
+    {
+      "slug": "bible-missionaries",
+      "number": 3,
+      "label": "Chapter 3",
+      "title": "Bible Missionaries",
+      "file": "03-bible-missionaries.json",
+      "startPage": 11,
+      "endPage": 18,
+      "wordCount": 5258,
+      "imageCount": 1
+    },
+    {
+      "slug": "the-early-reformers",
+      "number": 4,
+      "label": "Chapter 4",
+      "title": "The Early Reformers",
+      "file": "04-the-early-reformers.json",
+      "startPage": 19,
+      "endPage": 22,
+      "wordCount": 2350,
+      "imageCount": 0
+    },
+    {
+      "slug": "luthers-separation-from-rome",
+      "number": 5,
+      "label": "Chapter 5",
+      "title": "Luther’s Separation from Rome",
+      "file": "05-luthers-separation-from-rome.json",
+      "startPage": 23,
+      "endPage": 30,
+      "wordCount": 4999,
+      "imageCount": 1
+    },
+    {
+      "slug": "progress-of-the-reformation",
+      "number": 6,
+      "label": "Chapter 6",
+      "title": "Progress of the Reformation",
+      "file": "06-progress-of-the-reformation.json",
+      "startPage": 31,
+      "endPage": 36,
+      "wordCount": 3463,
+      "imageCount": 1
+    },
+    {
+      "slug": "later-reformers",
+      "number": 7,
+      "label": "Chapter 7",
+      "title": "Later Reformers",
+      "file": "07-later-reformers.json",
+      "startPage": 37,
+      "endPage": 43,
+      "wordCount": 4746,
+      "imageCount": 1
+    },
+    {
+      "slug": "babylon-is-fallen",
+      "number": 8,
+      "label": "Chapter 8",
+      "title": "Babylon is Fallen",
+      "file": "08-babylon-is-fallen.json",
+      "startPage": 44,
+      "endPage": 46,
+      "wordCount": 2013,
+      "imageCount": 0
+    },
+    {
+      "slug": "america-in-prophesy",
+      "number": 9,
+      "label": "Chapter 9",
+      "title": "America in Prophesy",
+      "file": "09-america-in-prophesy.json",
+      "startPage": 47,
+      "endPage": 52,
+      "wordCount": 2854,
+      "imageCount": 1
+    },
+    {
+      "slug": "modern-revivals",
+      "number": 10,
+      "label": "Chapter 10",
+      "title": "Modern Revivals",
+      "file": "10-modern-revivals.json",
+      "startPage": 53,
+      "endPage": 57,
+      "wordCount": 3279,
+      "imageCount": 0
+    },
+    {
+      "slug": "aware-of-evil-spirits",
+      "number": 11,
+      "label": "Chapter 11",
+      "title": "Aware of Evil Spirits",
+      "file": "11-aware-of-evil-spirits.json",
+      "startPage": 58,
+      "endPage": 60,
+      "wordCount": 1522,
+      "imageCount": 0
+    },
+    {
+      "slug": "the-first-great-deception",
+      "number": 12,
+      "label": "Chapter 12",
+      "title": "The First Great Deception",
+      "file": "12-the-first-great-deception.json",
+      "startPage": 61,
+      "endPage": 68,
+      "wordCount": 5273,
+      "imageCount": 1
+    },
+    {
+      "slug": "dangers-of-spiritualism",
+      "number": 13,
+      "label": "Chapter 13",
+      "title": "Dangers of Spiritualism",
+      "file": "13-dangers-of-spiritualism.json",
+      "startPage": 69,
+      "endPage": 71,
+      "wordCount": 1146,
+      "imageCount": 1
+    },
+    {
+      "slug": "character-and-aims-of-rome",
+      "number": 14,
+      "label": "Chapter 14",
+      "title": "Character and Aims of Rome",
+      "file": "14-character-and-aims-of-rome.json",
+      "startPage": 72,
+      "endPage": 78,
+      "wordCount": 4659,
+      "imageCount": 1
+    },
+    {
+      "slug": "the-coming-conflict",
+      "number": 15,
+      "label": "Chapter 15",
+      "title": "The Coming Conflict",
+      "file": "15-the-coming-conflict.json",
+      "startPage": 79,
+      "endPage": 84,
+      "wordCount": 3550,
+      "imageCount": 1
+    },
+    {
+      "slug": "the-mark-of-the-beast",
+      "number": 16,
+      "label": "Chapter 16",
+      "title": "The Mark of the Beast",
+      "file": "16-the-mark-of-the-beast.json",
+      "startPage": 85,
+      "endPage": 88,
+      "wordCount": 2682,
+      "imageCount": 0
+    },
+    {
+      "slug": "the-time-of-trouble",
+      "number": 17,
+      "label": "Chapter 17",
+      "title": "The Time of Trouble",
+      "file": "17-the-time-of-trouble.json",
+      "startPage": 89,
+      "endPage": 96,
+      "wordCount": 5719,
+      "imageCount": 1
+    },
+    {
+      "slug": "gods-people-delivered",
+      "number": 18,
+      "label": "Chapter 18",
+      "title": "God’s People Delivered",
+      "file": "18-gods-people-delivered.json",
+      "startPage": 97,
+      "endPage": 103,
+      "wordCount": 4757,
+      "imageCount": 1
+    }
+  ]
+}

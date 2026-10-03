@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { SHARING_NOTICE_TITLE } from "@/components/sharing-notice";
 import { siteConfig } from "@/config/site";
 import { getTractsBySeries } from "@/lib/tracts";
 
@@ -68,7 +69,11 @@ export async function SiteFooter() {
           <p>
             © {new Date().getFullYear()} {siteConfig.name}
           </p>
-          <p>Free to read, share and print.</p>
+          <p>
+            <Link href="/about#sharing" className="link-underline hover:text-stage-ink">
+              {SHARING_NOTICE_TITLE}
+            </Link>
+          </p>
         </div>
       </div>
     </footer>

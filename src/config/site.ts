@@ -20,7 +20,7 @@ export const siteConfig = {
   shortName: "BHL",
   tagline: "Plain questions, answered from Scripture.",
   description:
-    "A free library of Bible study tracts. Each one asks plain questions and answers them directly from Scripture — to read online, share, print or download.",
+    "A free library of Bible study tracts and books. Plain questions answered directly from Scripture — to read online, share, print or download.",
   url: resolveSiteUrl(),
   contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? PLACEHOLDER_EMAIL,
   locale: "en_US",

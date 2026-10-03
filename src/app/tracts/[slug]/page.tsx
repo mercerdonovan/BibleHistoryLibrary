@@ -10,6 +10,7 @@ import { SectionNav, type SectionLink } from "@/components/reader/section-nav";
 import { TractBody } from "@/components/reader/tract-body";
 import { TractPager } from "@/components/reader/tract-pager";
 import { JsonLd } from "@/components/seo/json-ld";
+import { SharingNotice } from "@/components/sharing-notice";
 import { CoverMotif } from "@/components/tract/cover-motif";
 import { TractCard, tractAccentStyle } from "@/components/tract/tract-card";
 import { absoluteUrl, siteConfig } from "@/config/site";
@@ -195,6 +196,7 @@ export default async function TractPage({ params }: TractPageProps) {
               reproduced word for word.
             </p>
             <ReaderActions {...actions} className="mt-6" />
+            <SharingNotice id="sharing" className="mt-10" />
             <p className="print-only" style={{ fontSize: "9pt", marginTop: "10pt" }}>
               {siteConfig.name} · {url}
             </p>

@@ -514,6 +514,170 @@
   }
 }
 
+/* ───────────────────────────── Books ───────────────────────────────────── */
+
+@layer components {
+  /* The cover as an object: spine shadow, page edge, a slow tilt on hover. */
+  .book-object {
+    perspective: 1400px;
+  }
+
+  .book-object-inner {
+    position: relative;
+    transform-origin: left center;
+    transform: rotateY(-9deg);
+    transition: transform 0.9s var(--ease-out-expo);
+    border-radius: 2px 5px 5px 2px;
+    box-shadow:
+      1px 0 0 rgb(255 255 255 / 0.25) inset,
+      6px 0 0 -1px #e9e2d3,
+      7px 0 0 -1px rgb(0 0 0 / 0.25),
+      0 2px 3px rgb(0 0 0 / 0.3),
+      28px 38px 60px -24px rgb(0 0 0 / 0.65);
+  }
+
+  .book-object:hover .book-object-inner,
+  a:focus-visible .book-object-inner {
+    transform: rotateY(0deg);
+  }
+
+  .book-object-spine {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 7%;
+    border-radius: 2px 0 0 2px;
+    background: linear-gradient(
+      90deg,
+      rgb(0 0 0 / 0.38),
+      rgb(255 255 255 / 0.16) 28%,
+      rgb(0 0 0 / 0.16) 46%,
+      transparent
+    );
+    pointer-events: none;
+  }
+
+  .book-object-sheen {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(105deg, transparent 40%, rgb(255 255 255 / 0.14) 50%, transparent 62%);
+    opacity: 0;
+    transition: opacity 0.9s var(--ease-out-expo);
+    pointer-events: none;
+  }
+
+  .book-object:hover .book-object-sheen {
+    opacity: 1;
+  }
+
+  /* Long-form book text: builds on .tract-prose */
+  .book-prose .b-paragraph {
+    margin-top: 1.05em;
+    hyphens: manual;
+  }
+
+  .book-prose .b-first {
+    margin-top: 0;
+  }
+
+  .book-prose .b-first::first-letter {
+    float: left;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 4.1em;
+    line-height: 0.82;
+    padding: 0.08em 0.06em 0 0;
+    color: var(--accent);
+  }
+
+  /* The book's boxed quotations */
+  .book-prose .b-callout {
+    margin: 2.6em auto;
+    padding: 1.5em 0.5em;
+    max-width: 32rem;
+    border-block: 2px dotted color-mix(in oklab, var(--accent) 55%, transparent);
+    text-align: center;
+    font-family: var(--font-display);
+    font-variation-settings: "SOFT" 50, "WONK" 0;
+    font-size: 1.24em;
+    font-weight: 400;
+    line-height: 1.34;
+    letter-spacing: -0.008em;
+    color: var(--ink);
+    text-wrap: balance;
+    font-variant-numeric: lining-nums;
+  }
+
+  .book-prose .b-callout p + p {
+    margin-top: 0.7em;
+  }
+
+  .book-prose .b-figure {
+    margin: 3em 0;
+  }
+
+  /* Whole picture, never cropped: scaled to fit the column and the screen. */
+  .book-prose .b-figure img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: calc(100dvh - 9rem);
+    margin-inline: auto;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    background: var(--bg-sunken);
+  }
+
+  @media (min-width: 64rem) {
+    .book-prose .b-figure {
+      margin-inline: -3rem;
+    }
+  }
+
+  /* Table-of-contents drawer */
+  .contents-drawer {
+    position: fixed;
+    inset: 0 0 0 auto;
+    margin: 0;
+    width: min(30rem, 100vw);
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    border: 0;
+    border-left: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--ink);
+    box-shadow: var(--shadow-lift);
+    overflow: hidden;
+  }
+
+  .contents-drawer::backdrop {
+    background: rgb(6 11 22 / 0.55);
+    backdrop-filter: blur(3px);
+  }
+
+  .contents-drawer[open] {
+    animation: drawer-in 0.5s var(--ease-out-expo);
+  }
+
+  .contents-drawer[open]::backdrop {
+    animation: fade-in 0.4s ease;
+  }
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateX(2.5rem);
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
 /* ─────────────────── Scroll-driven reading moments ───────────────────────
    Progressive enhancement: only where the browser supports view timelines
    and the reader has not asked for reduced motion. Text is never hidden —
@@ -558,6 +722,18 @@
       animation-range: entry 60% cover 32%;
     }
 
+    .book-prose .b-callout {
+      animation: t-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 90%;
+    }
+
+    .book-prose .b-figure img {
+      animation: b-image linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 35%;
+    }
+
     .scroll-parallax {
       animation: parallax-drift linear both;
       animation-timeline: scroll(root);
@@ -570,6 +746,17 @@
   from {
     opacity: 0.35;
     transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes b-image {
+  from {
+    opacity: 0.4;
+    transform: scale(0.965);
   }
   to {
     opacity: 1;
@@ -753,6 +940,58 @@
     text-decoration-color: #000 !important;
     text-decoration-thickness: 0.6pt !important;
     background: none !important;
+  }
+
+  .book-prose .b-first::first-letter {
+    float: none;
+    font: inherit;
+    padding: 0;
+    color: inherit;
+  }
+
+  .book-prose .b-paragraph {
+    margin-top: 0;
+    text-indent: 1.4em;
+  }
+
+  .book-prose .b-first {
+    text-indent: 0;
+  }
+
+  .book-prose .b-callout {
+    margin: 12pt auto;
+    padding: 8pt 0;
+    border-block: 0.6pt dotted #000;
+    font-family: var(--font-serif);
+    font-size: 12pt;
+    break-inside: avoid;
+  }
+
+  .book-prose .b-figure {
+    margin: 12pt auto;
+    max-width: 70%;
+    break-inside: avoid;
+  }
+
+  .sharing-notice {
+    margin-top: 16pt;
+    padding: 10pt 12pt;
+    border: 0.6pt solid #000;
+    border-radius: 0;
+    font-size: 9pt;
+    break-inside: avoid;
+  }
+
+  .sharing-notice h2,
+  .sharing-notice h3 {
+    font-family: var(--font-serif);
+    font-size: 11pt;
+    font-weight: 700;
+  }
+
+  .sharing-notice p {
+    font-size: 9pt;
+    color: #000;
   }
 
   a {

@@ -1,8 +1,11 @@
 import { ArrowRight, Download, Printer, Share2 } from "lucide-react";
 import Link from "next/link";
 
+import { BookCover } from "@/components/book/book-cover";
+import { bookStageBackground } from "@/components/book/book-style";
 import { HeroFade, HeroHeadline } from "@/components/home/hero-copy";
 import { HeroStage } from "@/components/home/hero-stage";
+import { SharingNotice } from "@/components/sharing-notice";
 import { Reveal } from "@/components/motion/reveal";
 import { TractCard, TractMetaLine, tractAccentStyle } from "@/components/tract/tract-card";
 import { TractCover } from "@/components/tract/tract-cover";
@@ -10,16 +13,19 @@ import { TractIndexList } from "@/components/tract/tract-index-list";
 import { TractRail } from "@/components/tract/tract-rail";
 import { ButtonLink } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
+import { getAllBooks } from "@/lib/books";
 import { getAllTracts, getFeaturedTracts, getNewestTracts, getTractsBySeries } from "@/lib/tracts";
 import { padNumber } from "@/lib/utils";
 
 export default async function HomePage() {
-  const [tracts, featured, newest, groups] = await Promise.all([
+  const [tracts, featured, newest, groups, books] = await Promise.all([
     getAllTracts(),
     getFeaturedTracts(),
     getNewestTracts(5),
     getTractsBySeries(),
+    getAllBooks(),
   ]);
+  const book = books[0];
 
   const first = tracts[0];
   const [lead, ...restFeatured] = featured;
@@ -199,6 +205,39 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── Books ────────────────────────────────────────────────────────── */}
+      {book ? (
+        <section aria-labelledby="book-title" className="container-page pt-24 sm:pt-32">
+          <Reveal>
+            <div
+              className="grain grid items-center gap-10 overflow-hidden rounded-xl p-8 text-stage-ink shadow-card sm:p-12 md:grid-cols-[minmax(0,15rem)_1fr] md:gap-14 lg:p-16"
+              style={{ background: bookStageBackground(book) }}
+            >
+              <Link href={book.href} aria-label={`${book.title}: about the book`} className="mx-auto block w-[58%] max-w-[15rem] md:w-full">
+                <BookCover book={book} sizes="(min-width: 48rem) 15rem, 58vw" />
+              </Link>
+              <div>
+                <p className="eyebrow" style={{ color: book.theme.stage.glow }}>
+                  Now in the library · A full book
+                </p>
+                <h2 id="book-title" className="display mt-4 text-[2.6rem] leading-[0.98] sm:text-[3.8rem]">
+                  {book.title}
+                </h2>
+                <p className="mt-5 max-w-xl text-[1rem] leading-relaxed text-white/80">{book.description}</p>
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <ButtonLink href={book.readHref} variant="stageSolid">
+                    Read the book <ArrowRight aria-hidden="true" />
+                  </ButtonLink>
+                  <ButtonLink href={book.href} variant="stage">
+                    About the book
+                  </ButtonLink>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </section>
+      ) : null}
+
       {/* ── How it works / order copies ──────────────────────────────────── */}
       <section aria-labelledby="use-title" className="container-page pt-24 sm:pt-32">
         <Reveal className="grain overflow-hidden rounded-xl bg-navy text-stage-ink">
@@ -236,6 +275,9 @@ export default async function HomePage() {
               ))}
             </ul>
           </div>
+        </Reveal>
+        <Reveal className="pt-6">
+          <SharingNotice id="sharing" headingLevel="h3" />
         </Reveal>
       </section>
     </>
