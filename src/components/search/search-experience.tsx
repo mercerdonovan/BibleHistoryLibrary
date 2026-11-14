@@ -6,24 +6,24 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDeferredValue, useEffect, useId, useMemo, useRef, useState } from "react";
 
-import { queryTerms, searchDocuments, snippet } from "@/lib/search";
-import type { BlockType, SearchDocument } from "@/lib/types";
-import { padNumber } from "@/lib/utils";
+import { queryTerms, searchDocuments, snippet, type SearchDocument, type SearchPassage } from "@/lib/search";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-const PASSAGE_LABEL: Record<BlockType, string> = {
-  heading: "Section",
-  question: "Question",
-  scripture: "Scripture",
-  note: "Note",
-  label: "Passage",
+const PASSAGE_LABEL: Record<SearchPassage["type"], string> = {
+  callout: "Quotation",
   paragraph: "Passage",
 };
 
 type IndexState = { status: "loading" } | { status: "ready"; documents: SearchDocument[] } | { status: "error" };
 
-export function SearchExperience({ suggestions }: { suggestions: string[] }) {
+interface SearchExperienceProps {
+  suggestions: string[];
+  /** Name the book on each result (only useful once there is more than one). */
+  showBookTitles: boolean;
+}
+
+export function SearchExperience({ suggestions, showBookTitles }: SearchExperienceProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -75,7 +75,7 @@ export function SearchExperience({ suggestions }: { suggestions: string[] }) {
     <div>
       <form role="search" onSubmit={(event) => event.preventDefault()} className="relative">
         <label htmlFor={inputId} className="sr-only">
-          Search the full text of every tract
+          Search the full text of every book
         </label>
         <Search aria-hidden="true" className="pointer-events-none absolute left-1 top-1/2 size-6 -translate-y-1/2 text-ink-muted sm:size-7" />
         <input
@@ -84,7 +84,7 @@ export function SearchExperience({ suggestions }: { suggestions: string[] }) {
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="A word, a verse, a question…"
+          placeholder="A word, a name, a verse…"
           autoComplete="off"
           autoCapitalize="off"
           spellCheck={false}
@@ -107,12 +107,12 @@ export function SearchExperience({ suggestions }: { suggestions: string[] }) {
         {index.status === "error"
           ? "The search index could not be loaded. Please reload the page."
           : !hasQuery
-            ? "Searches every word of every tract."
+            ? "Searches every word of every chapter."
             : index.status === "loading"
               ? "Loading the library…"
               : hits.length === 0
-                ? `No tract mentions “${deferredQuery.trim()}”.`
-                : `Found in ${hits.length} ${hits.length === 1 ? "tract" : "tracts"}`}
+                ? `No chapter mentions “${deferredQuery.trim()}”.`
+                : `Found in ${hits.length} ${hits.length === 1 ? "chapter" : "chapters"}`}
       </p>
 
       {!hasQuery ? (
@@ -137,10 +137,10 @@ export function SearchExperience({ suggestions }: { suggestions: string[] }) {
       <ol className="mt-8 border-t border-line">
         <AnimatePresence initial={false} mode="popLayout">
           {hits.map((hit) => {
-            const href = `/tracts/${hit.document.slug}`;
+            const { href } = hit.document;
             return (
               <motion.li
-                key={hit.document.slug}
+                key={hit.document.id}
                 layout="position"
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -150,9 +150,13 @@ export function SearchExperience({ suggestions }: { suggestions: string[] }) {
               >
                 <div>
                   <p className="text-[0.8rem] text-ink-muted">
-                    <span className="font-display tabular-nums">No. {padNumber(hit.document.order)}</span>
-                    <span aria-hidden="true" className="mx-1.5 text-line-strong">/</span>
-                    {hit.document.series}
+                    {showBookTitles ? (
+                      <>
+                        {hit.document.bookTitle}
+                        <span aria-hidden="true" className="mx-1.5 text-line-strong">/</span>
+                      </>
+                    ) : null}
+                    <span className="font-display">{hit.document.chapterLabel}</span>
                   </p>
                   <h2 className="display mt-2 text-[1.9rem] leading-[1.05]">
                     <Link href={href} className="link-underline">
@@ -162,7 +166,7 @@ export function SearchExperience({ suggestions }: { suggestions: string[] }) {
                   <p className="mt-2 text-[0.82rem] text-ink-muted">
                     {hit.matchCount > 0
                       ? `${hit.matchCount} matching ${hit.matchCount === 1 ? "passage" : "passages"}`
-                      : "Matches the title or topic"}
+                      : "Matches the chapter title"}
                   </p>
                 </div>
 
@@ -195,7 +199,9 @@ export function SearchExperience({ suggestions }: { suggestions: string[] }) {
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-[0.98rem] leading-relaxed text-ink-muted">{hit.document.description}</p>
+                    <Link href={href} className="link-underline text-[0.98rem] font-semibold text-ink">
+                      Read the chapter
+                    </Link>
                   )}
                 </div>
               </motion.li>

@@ -25,7 +25,7 @@
   --gold: #86611c;
   --gold-bright: #c39a45;
 
-  /* Always-dark "stage" surfaces (covers, tract heroes, footer) */
+  /* Always-dark "stage" surfaces (book spotlights, cards, footer) */
   --stage: #0d1528;
   --stage-ink: #f4ecdc;
   --stage-muted: #b9bfcd;
@@ -36,10 +36,21 @@
   --atmosphere-b: rgb(195 154 69 / 0.16);
   --grain-opacity: 0.35;
 
-  /* Per-tract accent; overridden inline on tract surfaces. */
+  /* Shelf */
+  --shelf-top: #d8ccb2;
+  --shelf-front: linear-gradient(180deg, #cdbf9f, #b7a681);
+
+  /* Per-book accent; overridden inline on book surfaces. */
   --accent-light: var(--burgundy);
   --accent-dark: #e88a9a;
   --accent: var(--accent-light);
+
+  /* Reader text size, set from the reader's saved preference. */
+  --reading-scale: 1;
+
+  /* Page gutter, and the inset that lines full-bleed rails up with it. */
+  --page-gutter: clamp(1.125rem, 4vw, 3rem);
+  --rail-inset: max(var(--page-gutter), calc((100% - 82rem) / 2 + var(--page-gutter)));
 }
 
 .dark {
@@ -68,10 +79,13 @@
   --atmosphere-b: rgb(218 184 110 / 0.1);
   --grain-opacity: 0.12;
 
+  --shelf-top: #2b3756;
+  --shelf-front: linear-gradient(180deg, #1b2540, #111a2f);
+
   --accent: var(--accent-dark);
 }
 
-/* Re-resolve the accent wherever a tract sets its own palette inline. */
+/* Re-resolve the accent wherever a book sets its own palette inline. */
 .accent-scope {
   --accent: var(--accent-light);
 }
@@ -179,7 +193,7 @@
     width: 100%;
     max-width: 82rem;
     margin-inline: auto;
-    padding-inline: clamp(1.125rem, 4vw, 3rem);
+    padding-inline: var(--page-gutter);
   }
 
   .eyebrow {
@@ -243,9 +257,9 @@
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x proximity;
-    scroll-padding-inline: clamp(1.125rem, 4vw, 3rem);
+    scroll-padding-inline: var(--rail-inset);
     padding-block: 1.25rem 2rem;
-    padding-inline: clamp(1.125rem, 4vw, 3rem);
+    padding-inline: var(--rail-inset);
     scrollbar-width: none;
   }
 
@@ -258,62 +272,65 @@
     flex: none;
   }
 
-  /* Tract card: lift, glow and a sheen that sweeps the cover. */
-  .tract-card {
-    --card-glow: var(--accent-dark);
-    display: block;
+  /* Chapter card: lift, glow, a slow push-in on the artwork and a sweeping sheen. */
+  .chapter-card {
     border-radius: var(--radius-lg);
     transition: transform 0.5s var(--ease-out-expo);
-    will-change: transform;
   }
 
-  .tract-card .cover {
-    transition:
-      box-shadow 0.5s var(--ease-out-expo),
-      transform 0.5s var(--ease-out-expo);
+  .chapter-card-frame {
     box-shadow: var(--shadow-card);
+    transition: box-shadow 0.5s var(--ease-out-expo);
   }
 
-  .tract-card .cover-sheen {
-    opacity: 0;
-    transform: translateX(-60%) skewX(-18deg);
-    transition:
-      opacity 0.3s ease,
-      transform 0.9s var(--ease-out-expo);
-  }
-
-  .tract-card .cover-motif {
+  .chapter-card-art {
     transition: transform 1.2s var(--ease-out-expo);
   }
 
+  .chapter-card-numeral {
+    color: transparent;
+    opacity: 0.55;
+  }
+
+  .chapter-card-sheen {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.14) 50%, transparent 65%);
+    opacity: 0;
+    transform: translateX(-70%);
+    transition:
+      opacity 0.3s ease,
+      transform 1s var(--ease-out-expo);
+  }
+
   @media (hover: hover) {
-    .tract-card:hover,
-    .tract-card:focus-visible {
+    .chapter-card:hover,
+    .chapter-card:focus-visible {
       transform: translateY(-6px);
     }
 
-    .tract-card:hover .cover,
-    .tract-card:focus-visible .cover {
-      transform: scale(1.015);
+    .chapter-card:hover .chapter-card-frame,
+    .chapter-card:focus-visible .chapter-card-frame {
       box-shadow:
-        0 0 0 1px color-mix(in oklab, var(--card-glow) 55%, transparent),
-        0 30px 60px -24px color-mix(in oklab, var(--card-glow) 55%, transparent),
+        0 0 0 1px color-mix(in oklab, var(--card-glow) 60%, transparent),
+        0 30px 60px -26px color-mix(in oklab, var(--card-glow) 60%, transparent),
         var(--shadow-lift);
     }
 
-    .tract-card:hover .cover-sheen,
-    .tract-card:focus-visible .cover-sheen {
-      opacity: 1;
-      transform: translateX(160%) skewX(-18deg);
+    .chapter-card:hover .chapter-card-art,
+    .chapter-card:focus-visible .chapter-card-art {
+      transform: scale(1.06);
     }
 
-    .tract-card:hover .cover-motif,
-    .tract-card:focus-visible .cover-motif {
-      transform: scale(1.08) rotate(1.5deg);
+    .chapter-card:hover .chapter-card-sheen,
+    .chapter-card:focus-visible .chapter-card-sheen {
+      opacity: 1;
+      transform: translateX(70%);
     }
   }
 
-  .tract-card:active {
+  .chapter-card:active {
     transform: translateY(-2px) scale(0.99);
   }
 
@@ -331,186 +348,32 @@
     background-size: 100% 1px;
   }
 
-  /* ───────────────────────── Tract reading typography ─────────────────── */
+  /* ───────────────────────────── Reading typography ───────────────────── */
 
-  .tract-prose {
+  .book-prose {
     font-family: var(--font-serif);
     font-optical-sizing: auto;
-    font-size: clamp(1.125rem, 0.6vw + 1rem, 1.3125rem);
+    font-size: calc(clamp(1.125rem, 0.6vw + 1rem, 1.3125rem) * var(--reading-scale));
     line-height: 1.68;
     color: var(--ink);
     hanging-punctuation: first;
     font-variant-numeric: oldstyle-nums proportional-nums;
   }
 
-  .tract-prose > section + section {
-    margin-top: clamp(3.5rem, 8vw, 6rem);
+  .book-prose .b-block {
+    scroll-margin-top: 7.5rem;
   }
 
-  .tract-prose .t-block {
-    scroll-margin-top: 7rem;
-  }
-
-  .tract-prose .t-block:target {
+  .book-prose .b-block:target,
+  .book-prose .b-block[data-flash] {
     background: color-mix(in oklab, var(--accent) 12%, transparent);
     box-shadow: 0 0 0 0.6rem color-mix(in oklab, var(--accent) 12%, transparent);
     border-radius: 2px;
   }
 
-  .tract-prose .t-paragraph {
-    margin-top: 1.15em;
-  }
-
-  .tract-prose .t-center {
-    text-align: center;
-  }
-
-  /* Opening passage: larger measure, drop cap */
-  .tract-prose .t-opening .t-paragraph {
-    font-size: 1.12em;
-    line-height: 1.62;
-    color: var(--ink);
-  }
-
-  .tract-prose .t-opening .t-paragraph:first-child::first-letter {
-    float: left;
-    font-family: var(--font-display);
-    font-weight: 500;
-    font-size: 4.1em;
-    line-height: 0.82;
-    padding: 0.08em 0.04em 0 0;
-    color: var(--accent);
-  }
-
-  /* Section heading, set as printed */
-  .tract-prose .t-heading {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin: 0 0 1.75rem;
-    font-family: var(--font-sans);
-    font-size: 0.8125rem;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    line-height: 1.5;
-    text-transform: none;
-    color: var(--accent);
-  }
-
-  .tract-prose .t-heading::after {
-    content: "";
-    flex: 1;
-    min-width: 2rem;
-    height: 1px;
-    background: linear-gradient(90deg, color-mix(in oklab, var(--accent) 55%, transparent), transparent);
-  }
-
-  .tract-prose .t-heading.t-center {
-    justify-content: center;
-  }
-
-  .tract-prose .t-heading.t-center::before {
-    content: "";
-    flex: 1;
-    min-width: 2rem;
-    height: 1px;
-    background: linear-gradient(270deg, color-mix(in oklab, var(--accent) 55%, transparent), transparent);
-  }
-
-  .tract-prose .t-heading + .t-heading {
-    margin-top: -0.75rem;
-  }
-
-  /* Question */
-  .tract-prose .t-question {
-    position: relative;
-    margin-top: 2.6em;
-    font-family: var(--font-display);
-    font-variation-settings: "SOFT" 50, "WONK" 0;
-    font-size: 1.36em;
-    font-weight: 500;
-    line-height: 1.22;
-    letter-spacing: -0.012em;
-    text-wrap: balance;
-    font-variant-numeric: lining-nums;
-  }
-
-  .tract-prose .t-heading + .t-question,
-  .tract-prose section > .t-question:first-child {
-    margin-top: 0;
-  }
-
-  .tract-prose .t-qnum {
-    color: var(--accent);
-    font-weight: 400;
-  }
-
-  @media (min-width: 64rem) {
-    .tract-prose .t-qnum {
-      position: absolute;
-      right: calc(100% + 1.1rem);
-      top: 0;
-      white-space: nowrap;
-      font-variant-numeric: tabular-nums lining-nums;
-    }
-  }
-
-  /* Scripture */
-  .tract-prose .t-scripture {
-    margin: 1.1em 0 0;
-    padding: 0.2em 0 0.2em 1.15em;
-    border-left: 2px solid color-mix(in oklab, var(--accent) 70%, transparent);
-    color: var(--ink);
-  }
-
-  .tract-prose .t-ref {
-    font-family: var(--font-sans);
-    font-style: normal;
-    font-size: 0.7em;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-    font-variant-numeric: lining-nums;
-  }
-
-  /* Note */
-  .tract-prose .t-note {
-    margin-top: 1em;
-    color: var(--ink-soft);
-  }
-
-  .tract-prose .t-note-label {
-    font-family: var(--font-sans);
-    font-size: 0.68em;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-  }
-
-  .tract-prose .t-label {
-    margin-top: 1.6em;
-    font-style: italic;
-    font-weight: 600;
-    color: var(--ink);
-  }
-
-  .tract-prose .t-small {
-    font-size: 0.82em;
-    color: var(--ink-muted);
-  }
-
-  .tract-prose b,
-  .tract-prose strong {
+  .book-prose b,
+  .book-prose strong {
     font-weight: 650;
-  }
-
-  /* Underlined emphasis from the printed tract */
-  .tract-prose .t-u {
-    text-decoration: underline;
-    text-decoration-thickness: 1.5px;
-    text-underline-offset: 0.22em;
-    text-decoration-color: color-mix(in oklab, var(--accent) 75%, transparent);
   }
 }
 
@@ -570,7 +433,7 @@
     opacity: 1;
   }
 
-  /* Long-form book text: builds on .tract-prose */
+  /* Long-form book text */
   .book-prose .b-paragraph {
     margin-top: 1.05em;
     hyphens: manual;
@@ -634,6 +497,205 @@
     }
   }
 
+  /* The dark stage a book is presented on: a softened, enlarged cover behind everything. */
+  .book-stage-backdrop {
+    position: absolute;
+    inset: -12%;
+    z-index: -2;
+    opacity: 0.55;
+    filter: blur(64px) saturate(1.5);
+    transform: scale(1.15);
+    pointer-events: none;
+  }
+
+  .book-stage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, rgb(3 5 12 / 0.66), rgb(3 5 12 / 0.18) 55%, rgb(3 5 12 / 0.05)),
+      linear-gradient(0deg, rgb(3 5 12 / 0.5), transparent 40%);
+  }
+
+  .stage-light {
+    background: radial-gradient(closest-side, color-mix(in oklab, var(--stage-glow, #dab86e) 34%, transparent), transparent);
+    filter: blur(24px);
+  }
+
+  /* Home spotlight. Phone: cover beside the title, actions straight after, so
+     a visitor arriving from a QR code can start reading without scrolling.
+     Desktop: a full-height stage with the cover large on the right. */
+  .featured-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 36%) minmax(0, 1fr);
+    grid-template-areas:
+      "cover head"
+      "actions actions"
+      "desc desc"
+      "meta meta";
+    column-gap: 1.35rem;
+    row-gap: 1.6rem;
+    align-items: end;
+  }
+
+  .featured-cover {
+    grid-area: cover;
+    align-self: center;
+  }
+
+  .featured-head {
+    grid-area: head;
+    padding-bottom: 0.4rem;
+  }
+
+  .featured-actions {
+    grid-area: actions;
+  }
+
+  .featured-desc {
+    grid-area: desc;
+  }
+
+  .featured-meta {
+    grid-area: meta;
+  }
+
+  @media (min-width: 40rem) {
+    .featured-hero {
+      grid-template-columns: minmax(0, 30%) minmax(0, 1fr);
+      column-gap: 2.5rem;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .featured-hero {
+      min-height: min(54rem, calc(100svh - 4rem));
+      grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+      grid-template-rows: 1fr auto auto auto auto 1fr;
+      grid-template-areas:
+        ". cover"
+        "head cover"
+        "desc cover"
+        "actions cover"
+        "meta cover"
+        ". cover";
+      column-gap: 4rem;
+      row-gap: 0;
+      align-items: start;
+    }
+
+    .featured-cover {
+      justify-self: center;
+      width: min(100%, 25rem);
+      padding-inline: 2.5rem;
+    }
+
+    .featured-head {
+      padding-bottom: 0;
+    }
+
+    .featured-desc {
+      margin-top: 1.75rem;
+    }
+
+    .featured-actions {
+      margin-top: 2.25rem;
+    }
+
+    .featured-meta {
+      margin-top: 2.75rem;
+    }
+  }
+
+  /* The shelf: covers standing on one long ledge, titles beneath it. */
+  .shelf {
+    --shelf-h: 12rem;
+    --shelf-pad: 2.75rem;
+  }
+
+  @media (min-width: 40rem) {
+    .shelf {
+      --shelf-h: 15rem;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .shelf {
+      --shelf-h: 17.5rem;
+    }
+  }
+
+  .shelf .rail.shelf-row {
+    gap: clamp(1.75rem, 4vw, 3.5rem);
+    padding-top: var(--shelf-pad);
+    padding-bottom: 1rem;
+    align-items: flex-start;
+  }
+
+  .shelf-item {
+    width: calc(var(--shelf-h) * var(--cover-ratio, 0.75));
+  }
+
+  .shelf-item .book-object {
+    height: var(--shelf-h);
+  }
+
+  .shelf-ledge {
+    position: absolute;
+    inset-inline: 0;
+    top: calc(var(--shelf-pad) + var(--shelf-h) - 2px);
+    height: 0.95rem;
+    background: var(--shelf-front);
+    border-top: 3px solid var(--shelf-top);
+    box-shadow: 0 22px 34px -16px rgb(0 0 0 / 0.38);
+    mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  }
+
+  .shelf-waiting {
+    width: auto;
+    min-width: 12rem;
+  }
+
+  .shelf-spines {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.3rem;
+    height: var(--shelf-h);
+  }
+
+  .shelf-spine {
+    display: block;
+    border-radius: 3px 3px 1px 1px;
+    border: 1px dashed color-mix(in oklab, var(--line-strong) 80%, transparent);
+    background: linear-gradient(90deg, color-mix(in oklab, var(--line) 55%, transparent), transparent 70%);
+  }
+
+  /* The last spine leans against the end of the row. */
+  .shelf-spine:last-child {
+    transform: rotate(9deg);
+    transform-origin: bottom left;
+  }
+
+  /* Reader text-size popover, pinned under the reader bar. */
+  .text-size-pop {
+    position: fixed;
+    inset: 7.6rem var(--rail-inset) auto auto;
+    margin: 0;
+    width: 15.5rem;
+    padding: 1.1rem 1.15rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-raised);
+    color: var(--ink);
+    box-shadow: var(--shadow-lift);
+  }
+
+  .text-size-pop:popover-open {
+    animation: pop-in 0.35s var(--ease-out-expo);
+  }
+
   /* Table-of-contents drawer */
   .contents-drawer {
     position: fixed;
@@ -678,6 +740,13 @@
   }
 }
 
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}
+
 /* ─────────────────── Scroll-driven reading moments ───────────────────────
    Progressive enhancement: only where the browser supports view timelines
    and the reader has not asked for reduced motion. Text is never hidden —
@@ -685,45 +754,8 @@
 
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
-    .tract-prose .t-heading,
-    .tract-prose .t-question,
-    .tract-prose .t-scripture {
-      animation: t-rise linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 90%;
-    }
-
-    .tract-prose .t-heading::after,
-    .tract-prose .t-heading.t-center::before {
-      transform-origin: left;
-      animation: t-rule linear both;
-      animation-timeline: view();
-      animation-range: entry 20% cover 30%;
-    }
-
-    .tract-prose .t-heading.t-center::before {
-      transform-origin: right;
-    }
-
-    .tract-prose .t-scripture .t-u {
-      text-decoration: none;
-      -webkit-box-decoration-break: clone;
-      box-decoration-break: clone;
-      background-image: linear-gradient(
-        color-mix(in oklab, var(--accent) 75%, transparent),
-        color-mix(in oklab, var(--accent) 75%, transparent)
-      );
-      background-repeat: no-repeat;
-      background-position: 0 100%;
-      background-size: 0% 1.5px;
-      padding-bottom: 0.08em;
-      animation: t-underline linear both;
-      animation-timeline: view();
-      animation-range: entry 60% cover 32%;
-    }
-
     .book-prose .b-callout {
-      animation: t-rise linear both;
+      animation: rise linear both;
       animation-timeline: view();
       animation-range: entry 0% entry 90%;
     }
@@ -734,15 +766,22 @@
       animation-range: entry 0% cover 35%;
     }
 
-    .scroll-parallax {
-      animation: parallax-drift linear both;
-      animation-timeline: scroll(root);
-      animation-range: 0 100vh;
+    /* The home page quotation brightens word by word as it scrolls into view. */
+    .quote-reveal {
+      view-timeline-name: --quote;
+    }
+
+    .quote-reveal .quote-word {
+      animation: quote-word linear both;
+      animation-timeline: --quote;
+      animation-range:
+        cover calc(8% + var(--i) / var(--n) * 30%)
+        cover calc(16% + var(--i) / var(--n) * 30%);
     }
   }
 }
 
-@keyframes t-rise {
+@keyframes rise {
   from {
     opacity: 0.35;
     transform: translateY(14px);
@@ -764,25 +803,12 @@
   }
 }
 
-@keyframes t-rule {
+@keyframes quote-word {
   from {
-    transform: scaleX(0);
+    opacity: 0.22;
   }
   to {
-    transform: scaleX(1);
-  }
-}
-
-@keyframes t-underline {
-  to {
-    background-size: 100% 1.5px;
-  }
-}
-
-@keyframes parallax-drift {
-  to {
-    transform: translate3d(0, 18vh, 0) scale(1.08);
-    opacity: 0.25;
+    opacity: 1;
   }
 }
 
@@ -862,84 +888,16 @@
     display: none !important;
   }
 
-  .tract-prose {
+  .atmosphere {
+    background: none !important;
+  }
+
+  .book-prose {
     font-size: 11pt;
     line-height: 1.45;
     max-width: none !important;
     orphans: 3;
     widows: 3;
-  }
-
-  .tract-prose > section + section {
-    margin-top: 20pt;
-  }
-
-  .tract-prose .t-opening .t-paragraph {
-    font-size: 1em;
-  }
-
-  .tract-prose .t-opening .t-paragraph:first-child::first-letter {
-    float: none;
-    font: inherit;
-    padding: 0;
-    color: inherit;
-  }
-
-  .tract-prose .t-heading {
-    margin-bottom: 8pt;
-    font-size: 9.5pt;
-    letter-spacing: 0.08em;
-    break-after: avoid;
-  }
-
-  .tract-prose .t-heading::after,
-  .tract-prose .t-heading::before {
-    display: none;
-  }
-
-  .tract-prose .t-question {
-    margin-top: 14pt;
-    font-family: var(--font-serif);
-    font-size: 1.05em;
-    font-weight: 700;
-    break-after: avoid;
-    break-inside: avoid;
-  }
-
-  .tract-prose .t-qnum {
-    position: static;
-    font-weight: 700;
-  }
-
-  .tract-prose .t-scripture {
-    margin-top: 4pt;
-    padding-left: 10pt;
-    border-left: 1pt solid #000;
-    break-inside: avoid;
-  }
-
-  .tract-prose .t-ref {
-    font-family: var(--font-serif);
-    font-size: 1em;
-    font-style: italic;
-    letter-spacing: 0;
-  }
-
-  .tract-prose .t-note {
-    margin-top: 4pt;
-  }
-
-  .tract-prose .t-note-label {
-    font-family: var(--font-serif);
-    font-size: 1em;
-    letter-spacing: 0;
-  }
-
-  .tract-prose .t-u {
-    text-decoration: underline !important;
-    text-decoration-color: #000 !important;
-    text-decoration-thickness: 0.6pt !important;
-    background: none !important;
   }
 
   .book-prose .b-first::first-letter {

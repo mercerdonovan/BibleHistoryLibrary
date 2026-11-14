@@ -5,7 +5,8 @@ import { notFound } from "next/navigation";
 
 import { BookContents } from "@/components/book/book-contents";
 import { BookCover } from "@/components/book/book-cover";
-import { bookAccentStyle, bookStageBackground } from "@/components/book/book-style";
+import { BookStage } from "@/components/book/book-stage";
+import { bookAccentStyle } from "@/components/book/book-style";
 import { ResumeLink } from "@/components/book/resume-link";
 import { Reveal } from "@/components/motion/reveal";
 import { ReaderActions } from "@/components/reader/reader-actions";
@@ -54,7 +55,7 @@ export default async function BookPage({ params }: BookPageProps) {
   return (
     <article className="accent-scope" style={bookAccentStyle(book)}>
       {/* ── Title stage ──────────────────────────────────────────────────── */}
-      <header className="grain relative overflow-hidden text-stage-ink" style={{ background: bookStageBackground(book) }}>
+      <BookStage book={book} as="header">
         <div className="container-page relative pb-14 pt-8 sm:pb-20 sm:pt-12">
           <nav aria-label="Breadcrumb">
             <ol className="flex flex-wrap items-center gap-x-2 text-[0.8rem] text-white/70">
@@ -115,7 +116,7 @@ export default async function BookPage({ params }: BookPageProps) {
             </div>
           </div>
         </div>
-      </header>
+      </BookStage>
 
       <div className="container-page">
         {/* ── Contents ───────────────────────────────────────────────────── */}

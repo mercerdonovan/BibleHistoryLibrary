@@ -7,7 +7,6 @@ import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 
 export function isActivePath(pathname: string, href: string): boolean {
-  if (href === "/library") return pathname.startsWith("/library") || pathname.startsWith("/tracts");
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 

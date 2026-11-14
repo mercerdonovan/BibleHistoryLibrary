@@ -9,14 +9,14 @@ export default function NotFound() {
         <p className="eyebrow text-gold">Page not found</p>
         <h1 className="display mt-4 max-w-3xl text-[clamp(2.6rem,8vw,5.5rem)]">This page isn’t on the shelf.</h1>
         <p className="mt-5 max-w-lg text-[1.05rem] leading-relaxed text-ink-soft">
-          The address may have changed, or the link may be incomplete. Every tract is still in the library.
+          The address may have changed, or the link may be incomplete. Every book is still in the library.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <ButtonLink href="/library">
-            Browse the library <ArrowRight aria-hidden="true" />
+          <ButtonLink href="/books">
+            Browse the books <ArrowRight aria-hidden="true" />
           </ButtonLink>
           <ButtonLink href="/search" variant="outline">
-            Search the tracts
+            Search the books
           </ButtonLink>
         </div>
       </div>

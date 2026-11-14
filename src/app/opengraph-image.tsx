@@ -11,9 +11,9 @@ export default async function Image() {
   return new ImageResponse(
     (
       <OgCard
-        eyebrow="A free library of Bible studies"
-        title="Ask the question. Read the verse."
-        footer="Read · Share · Print"
+        eyebrow="Free books to read online"
+        title="Whole books, freely given."
+        footer="Read · Download · Share"
         from="#1b2a52"
         to="#070c18"
         glow="#dab86e"

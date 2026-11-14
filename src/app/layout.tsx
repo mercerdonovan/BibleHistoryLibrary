@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Hanken_Grotesk, Newsreader } from "next/font/google";
 
+import { textSizeBootScript } from "@/components/book/text-size";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { ThemeProvider } from "@/components/layout/theme-provider";
@@ -74,6 +75,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
       className={`${fraunces.variable} ${newsreader.variable} ${hanken.variable}`}
     >
+      <head>
+        {/* Applies the reader's saved text size before first paint. */}
+        <script dangerouslySetInnerHTML={{ __html: textSizeBootScript }} />
+      </head>
       <body className="min-h-dvh">
         <ThemeProvider>
           <MotionProvider>

@@ -2,11 +2,11 @@
 
 # Bible History Library
 
-Digital Christian tract and book library for Bible History Library.
+Digital Christian book library for Bible History Library.
 
-The initial release is tract-first. Source tract PDFs live in `documents/tracts/` and are the canonical source of truth for tract wording. The public site is designed primarily for people arriving from QR codes on physical tracts and tract holders distributed in stores and other public locations.
+This site is books only. Tracts live on a separate site and must not be reintroduced here. Source book PDFs live in `Doccuments/Books/` and are the canonical source of truth for book wording. Books are added one at a time as they are prepared; the site must keep working, and keep looking intentional, with one book or many. Many visitors arrive from QR codes on physical copies, usually on a phone.
 
-The experience should combine a premium streaming-library browsing model with high-end editorial reading. Visitors should be able to discover, search, read, share, print, and download tract material easily.
+The experience should combine a premium streaming-library browsing model with high-end editorial reading. Visitors should be able to discover, search, read, share, print, and download books easily.
 
 ## Commands
 
@@ -29,41 +29,33 @@ Target Vercel deployment.
 
 ## Where things live
 
-- `documents/tracts/` contains the original tract PDFs. Treat these as canonical source documents.
-- Keep tract metadata and tract content in a clear typed content layer rather than hardcoding repeated information inside components.
-- Keep canonical tract wording separate from visual/display metadata.
+- `Doccuments/Books/` contains the original book PDFs (and Pages documents). Treat these as canonical source documents.
+- `content/books/<slug>/` holds the canonical text generated from them (`book.json` + one file per chapter). Never edit by hand; regenerate with `scripts/extract_book.py` and check with `scripts/verify_book.py`.
+- `src/content/books.ts` holds per-book presentation metadata (title, description, colours, picture alt text, artwork allowlist, search suggestions, home-page quotation).
+- `src/lib/books.ts` is the only module that knows the content is file-based.
+- Keep canonical book wording separate from visual/display metadata.
 - Reusable library, reader, navigation, search, sharing, print, motion, and theme components should live outside page files.
-- Keep generic UI primitives separate from tract/domain components.
-- Keep tract-specific visual configuration data-driven where practical so individual tracts can look distinctive without duplicating entire page implementations.
+- Keep generic UI primitives separate from book/domain components.
+- Keep book-specific visual configuration data-driven so individual books can look distinctive without duplicating page implementations.
 
 The initial content system should remain file-based, but structure it so a CMS such as Sanity could replace or augment the content layer later without rebuilding the front end.
 
-Useful tract metadata may include:
-
-- slug
-- display title
-- collection / series
-- source PDF
-- related tracts
-- previous / next relationships
-- visual accent/theme
-- SEO metadata
-- publication/order information where available
+See README.md → "Adding a book" for the full checklist when a new book arrives.
 
 ## Non-negotiables
 
-- **Tract wording is immutable.** Text from `documents/tracts/` must remain exactly as supplied.
-- Do not rewrite, paraphrase, summarize, modernize, correct spelling, correct grammar, omit text, or silently alter tract wording.
+- **Book wording is immutable.** Text from `Doccuments/Books/` must remain exactly as supplied.
+- Do not rewrite, paraphrase, summarize, modernize, correct spelling, correct grammar, omit text, or silently alter book wording. Quoting book text elsewhere on the site means quoting a complete printed unit (such as a whole boxed quotation) exactly.
 - If PDF extraction leaves any word genuinely uncertain, do not guess. Flag the exact ambiguity.
-- Supporting website copy, navigation copy, summaries, and SEO descriptions must remain clearly separate from canonical tract text.
-- **No crosses or religious/denominational symbols.** The site may feel explicitly Christian through content, typography, atmosphere, and language without relying on iconography.
-- Do not invent quotations, historical claims, ministry facts, statistics, endorsements, or tract content.
+- Supporting website copy, navigation copy, summaries, and SEO descriptions must remain clearly separate from canonical book text.
+- **No crosses or religious/denominational symbols.** The site may feel explicitly Christian through content, typography, atmosphere, and language without relying on iconography. A book's own pictures appear in its reader as printed, but any picture showing a cross or other religious symbol must stay out of the `artwork` allowlist so it is never used as site decoration.
+- Do not invent quotations, historical claims, ministry facts, statistics, endorsements, or book content.
 - Do not invent Bible History Library's contact email. Keep it in one obvious configuration/content location until the real address is supplied.
 - No contact form in the initial release. Physical-copy requests use a visible email address.
-- Tract pages must be real web reading experiences. Do not use a plain embedded PDF as the primary reader.
+- Chapter pages must be real web reading experiences. Do not use a plain embedded PDF as the primary reader.
 - Original PDFs should remain downloadable when available.
-- No lorem ipsum inside tract content.
-- Do not bury tract discovery beneath marketing copy.
+- No lorem ipsum inside book content.
+- Do not bury book discovery beneath marketing copy.
 - Reading usability takes priority over visual effects.
 
 ## Primary routes
@@ -72,43 +64,31 @@ Useful tract metadata may include:
 
 Premium library landing experience with:
 
-- hero
-- featured tracts
-- series / collections
-- newest additions
-- prominent library browsing
+- a spotlight for the featured book
+- its chapters as a browsable row
+- the shelf of every book
+- ways to read / share / order copies
 
 It should feel cinematic and highly designed without becoming a generic ministry homepage.
 
-### Library
+### Books (`/books`)
 
-Primary discovery interface.
+The library: every book, with a clear way into each. Must scale from one book to many.
 
-Support:
+### Book pages (`/books/<slug>`, `/books/<slug>/read`, `/books/<slug>/read/<chapter>`)
 
-- tract browsing
-- series / collections
-- search
-- clear hierarchy
-- strong mobile behavior
-- visually distinctive tract cards
-
-### Tract pages
-
-Each tract gets a custom long-form editorial reading experience.
+Each book gets an authored, long-form editorial reading experience.
 
 Include:
 
-- complete canonical tract text
-- tract-specific visual treatment
-- reading progress
+- complete canonical book text, chapter by chapter, with the book's pictures and boxed quotations in place
+- book-specific visual treatment
+- reading progress and a remembered place
+- adjustable text size
 - Share
-- Print
+- Print (per chapter)
 - original PDF download when available
-- related tracts
-- previous / next navigation
-
-Individual tract pages should feel authored for their material rather than like the same blog template with different text pasted into it.
+- contents and previous / next chapter navigation
 
 ### Search
 
@@ -122,15 +102,9 @@ Explain Bible History Library clearly and concisely.
 
 ### Contact / Order Copies
 
-Show the ministry contact email for requests involving additional physical tracts or books.
+Show the ministry contact email for requests involving printed copies of books.
 
 No contact form.
-
-### Books
-
-Books are planned but secondary during the tract-first release.
-
-The Books route should look intentional and integrated rather than like an unfinished error page.
 
 ## Design system
 
@@ -158,7 +132,7 @@ Define proper design tokens rather than scattering raw colors through components
 
 Both light and dark themes must be intentionally designed.
 
-Individual tracts or collections may introduce their own restrained accent palettes while remaining visibly part of the same system.
+Individual books may introduce their own restrained accent palettes while remaining visibly part of the same system.
 
 ### Type
 
@@ -209,15 +183,13 @@ Avoid:
 
 Until real covers and custom artwork exist, build the visual identity primarily from typography, layout, color, shapes, and tasteful graphic treatments.
 
-## Tract cards
+## Books and chapter cards
 
-Treat tracts as physical published objects rather than generic content cards.
+Treat books as physical published objects: the real cover at its printed proportions, with spine and page edge, standing on a shelf.
 
-The visual language may suggest the proportions of a folded physical tract: taller vertical rectangles rather than ordinary landscape thumbnails.
+Chapter cards are tall vertical cards. They may use the book's own cleared pictures as artwork; chapters without one are set in type.
 
-Temporary text-based covers are acceptable until custom tract covers are supplied.
-
-Cards can vary by tract/collection while maintaining consistent interaction and information hierarchy.
+Cards can vary by book while maintaining consistent interaction and information hierarchy.
 
 ## Motion
 
@@ -235,7 +207,7 @@ Library and homepage interactions may include:
 - layered transitions
 - other purposeful premium interactions
 
-Tract pages may use:
+Reading pages may use:
 
 - scroll-driven reveals
 - animated pull quotes
@@ -266,7 +238,7 @@ Everything must respect `prefers-reduced-motion`.
 
 ## Print
 
-Tract pages need deliberate print styling.
+Chapter pages need deliberate print styling.
 
 Printed output should:
 
@@ -274,7 +246,7 @@ Printed output should:
 - remove interactive controls
 - remove unnecessary decorative effects
 - disable animation
-- preserve the complete tract text exactly
+- preserve the complete chapter text exactly
 - use strong readable typography
 - use sensible page breaks
 - avoid wasting ink
@@ -286,9 +258,9 @@ Do not simply print the normal screen layout.
 
 Use the Web Share API where supported.
 
-Provide a useful fallback such as copying the canonical tract URL.
+Provide a useful fallback such as copying the canonical book or chapter URL.
 
-Sharing should feel like a first-class feature because many visitors may arrive from physical tracts and then forward the material digitally.
+Sharing should feel like a first-class feature because many visitors may arrive from physical copies and then forward the material digitally.
 
 ## SEO
 
@@ -297,7 +269,7 @@ Implement production SEO from the beginning.
 Include:
 
 - page metadata
-- per-tract metadata
+- per-book and per-chapter metadata
 - canonical URLs
 - Open Graph
 - social metadata
@@ -305,9 +277,9 @@ Include:
 - robots
 - appropriate structured data
 
-SEO summaries are supporting website copy. They must never replace or modify canonical tract wording.
+SEO summaries are supporting website copy. They must never replace or modify canonical book wording.
 
-Build social previews that still look intentional before custom tract covers exist.
+Social previews should look intentional for every book and chapter.
 
 ## Accessibility
 
@@ -336,7 +308,7 @@ A major use case is someone scanning a QR code and opening the site immediately 
 Prioritize:
 
 - fast orientation
-- clear tract discovery
+- clear book discovery
 - excellent reading typography
 - comfortable tap targets
 - search
@@ -394,7 +366,7 @@ Interface copy should stay concise.
 
 ## Working rules
 
-Before changing architecture, inspect the existing project and `documents/tracts/`.
+Before changing architecture, inspect the existing project and `Doccuments/Books/`.
 
 Do not invent missing project facts.
 
@@ -417,15 +389,14 @@ The finished product should feel authored and art-directed, not generated from a
 
 Verify:
 
-- tract wording matches source PDFs exactly
-- all tract routes work
+- book wording matches source PDFs exactly (`scripts/verify_book.py`)
+- all book and chapter routes work
 - library browsing works
 - search works
 - sharing works
 - print output is clean
 - PDF downloads work where available
 - previous/next navigation works
-- related tract links work
 - light and dark themes work
 - mobile QR-entry experience works well
 - keyboard navigation works

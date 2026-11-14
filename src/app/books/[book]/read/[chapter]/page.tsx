@@ -8,7 +8,9 @@ import { BookContents } from "@/components/book/book-contents";
 import { BookProgress } from "@/components/book/book-progress";
 import { bookAccentStyle } from "@/components/book/book-style";
 import { ContentsDrawer } from "@/components/book/contents-drawer";
-import { HeroFade } from "@/components/home/hero-copy";
+import { PassageHighlight } from "@/components/book/passage-highlight";
+import { TextSizeControl } from "@/components/book/text-size-control";
+import { HeroFade } from "@/components/motion/entrance";
 import { ReaderActions } from "@/components/reader/reader-actions";
 import { JsonLd } from "@/components/seo/json-ld";
 import { SharingNoticeBrief } from "@/components/sharing-notice";
@@ -70,7 +72,6 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
     url,
     pdfHref: book.pdfHref,
     pdfFileName: book.pdfFileName,
-    showPrint: false,
   };
 
   return (
@@ -90,7 +91,7 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
             <span aria-hidden="true" className="mx-2 text-line-strong">/</span>
             {chapter.title}
           </p>
-          <div className="flex items-center gap-3 text-[0.8rem] text-ink-muted">
+          <div className="flex items-center gap-2 text-[0.8rem] text-ink-muted sm:gap-3">
             <BookProgress
               bookSlug={book.slug}
               chapterSlug={chapter.slug}
@@ -99,10 +100,11 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
               chapterWords={chapter.wordCount}
               totalWords={book.wordCount}
             />
+            <TextSizeControl />
             <ContentsDrawer title={book.title}>
               <BookContents chapters={book.chapters} currentSlug={chapter.slug} compact className="border-t-0" />
               <div className="mt-6">
-                <ReaderActions {...actions} title={book.title} url={absoluteUrl(book.href)} shareVariant="outline" />
+                <ReaderActions {...actions} title={book.title} url={absoluteUrl(book.href)} showPrint={false} shareVariant="outline" />
                 <SharingNoticeBrief href={`${book.href}#sharing`} className="mt-4 text-ink-muted" />
               </div>
             </ContentsDrawer>
@@ -153,6 +155,7 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
       <div className="container-page pt-6 sm:pt-10">
         <div className="mx-auto max-w-[41rem]">
           <BookBody id={BODY_ID} blocks={body.blocks} imageAlt={book.imageAlt} />
+          <PassageHighlight key={chapter.slug} />
 
           <footer className="no-print mt-16 border-t border-line-strong pt-8 sm:mt-24">
             <p className="text-[0.9rem] text-ink-muted">

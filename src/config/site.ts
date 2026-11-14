@@ -18,16 +18,15 @@ function resolveSiteUrl(): string {
 export const siteConfig = {
   name: "Bible History Library",
   shortName: "BHL",
-  tagline: "Plain questions, answered from Scripture.",
+  tagline: "Whole books, freely given.",
   description:
-    "A free library of Bible study tracts and books. Plain questions answered directly from Scripture — to read online, share, print or download.",
+    "Christian books from the Bible History Library, free to read online chapter by chapter, to download exactly as printed, and to share.",
   url: resolveSiteUrl(),
   contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? PLACEHOLDER_EMAIL,
   locale: "en_US",
   nav: [
-    { href: "/library", label: "Library" },
-    { href: "/search", label: "Search" },
     { href: "/books", label: "Books" },
+    { href: "/search", label: "Search" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Order copies" },
   ],

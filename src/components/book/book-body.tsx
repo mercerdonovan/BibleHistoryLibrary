@@ -1,7 +1,7 @@
 import Image from "next/image";
 
-import type { BookBlock } from "@/lib/book-types";
-import type { TextRun } from "@/lib/types";
+import { bookBlockAnchor } from "@/lib/book-anchor";
+import type { BookBlock, TextRun } from "@/lib/book-types";
 import { cn } from "@/lib/utils";
 
 /**
@@ -12,8 +12,6 @@ import { cn } from "@/lib/utils";
  * the book's boxed quotations, and its full-page pictures. It never adds,
  * removes or reorders words.
  */
-
-export const bookBlockAnchor = (index: number): string => `b${index + 1}`;
 
 function Runs({ runs }: { runs: TextRun[] }) {
   return runs.map((run, index) => {
@@ -34,13 +32,13 @@ export function BookBody({ id, blocks, imageAlt }: BookBodyProps) {
   const firstParagraph = blocks.findIndex((block) => block.type === "paragraph");
 
   return (
-    <div id={id} className="tract-prose book-prose">
+    <div id={id} className="book-prose">
       {blocks.map((block, index) => {
         const anchor = bookBlockAnchor(index);
 
         if (block.type === "paragraph") {
           return (
-            <p key={anchor} id={anchor} className={cn("t-block b-paragraph", index === firstParagraph && "b-first")}>
+            <p key={anchor} id={anchor} className={cn("b-block b-paragraph", index === firstParagraph && "b-first")}>
               <Runs runs={block.runs} />
             </p>
           );
@@ -48,7 +46,7 @@ export function BookBody({ id, blocks, imageAlt }: BookBodyProps) {
 
         if (block.type === "callout") {
           return (
-            <aside key={anchor} id={anchor} className="t-block b-callout">
+            <aside key={anchor} id={anchor} className="b-block b-callout">
               {block.paragraphs.map((runs, paragraph) => (
                 <p key={paragraph}>
                   <Runs runs={runs} />
@@ -59,7 +57,7 @@ export function BookBody({ id, blocks, imageAlt }: BookBodyProps) {
         }
 
         return (
-          <figure key={anchor} id={anchor} className="t-block b-figure">
+          <figure key={anchor} id={anchor} className="b-block b-figure">
             <Image
               src={block.src}
               width={block.width}

@@ -7,7 +7,7 @@ import { BookContents } from "@/components/book/book-contents";
 import { BookCover } from "@/components/book/book-cover";
 import { bookAccentStyle } from "@/components/book/book-style";
 import { ResumeLink } from "@/components/book/resume-link";
-import { HeroFade } from "@/components/home/hero-copy";
+import { HeroFade } from "@/components/motion/entrance";
 import { ReaderActions } from "@/components/reader/reader-actions";
 import { SharingNoticeBrief } from "@/components/sharing-notice";
 import { absoluteUrl, siteConfig } from "@/config/site";

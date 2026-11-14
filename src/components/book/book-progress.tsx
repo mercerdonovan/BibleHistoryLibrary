@@ -36,7 +36,7 @@ export function BookProgress({ bookSlug, chapterSlug, targetId, wordsBefore, cha
     let frame = 0;
 
     const currentBlock = (): string | undefined => {
-      const blocks = target.querySelectorAll<HTMLElement>(".t-block");
+      const blocks = target.querySelectorAll<HTMLElement>(".b-block");
       for (const block of blocks) {
         if (block.getBoundingClientRect().bottom > 140) return block.id;
       }

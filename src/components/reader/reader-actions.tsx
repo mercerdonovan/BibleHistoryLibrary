@@ -10,16 +10,16 @@ interface ReaderActionsProps {
   title: string;
   /** Short supporting line passed to the native share sheet. */
   text: string;
-  /** Canonical URL of the publication. */
+  /** Canonical URL of the book or chapter. */
   url: string;
   pdfHref?: string;
   pdfFileName?: string;
-  /** Offer the browser's print dialog. Off for books, whose PDF is the print edition. */
+  /** Offer the browser's print dialog for this page (a chapter prints cleanly; see the print styles). */
   showPrint?: boolean;
   showShare?: boolean;
   /** Override the Share button's style (it is the primary action by default). */
   shareVariant?: ButtonVariant;
-  variant?: "stage" | "page" | "dock";
+  variant?: "stage" | "page";
   className?: string;
 }
 
@@ -66,34 +66,6 @@ export function ReaderActions({ title, text, url, pdfHref, pdfFileName, showPrin
       {state === "copied" ? "Link copied to clipboard" : state === "failed" ? `Could not copy. The link is ${url}` : ""}
     </span>
   );
-
-  if (variant === "dock") {
-    const item = "flex min-h-14 flex-1 flex-col items-center justify-center gap-1 text-[0.7rem] font-semibold text-ink-soft active:bg-sunken";
-    return (
-      <div
-        className={cn(
-          "no-print fixed inset-x-0 bottom-0 z-40 flex border-t border-line bg-bg/92 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden",
-          className,
-        )}
-      >
-        <button type="button" onClick={share} className={item}>
-          <ShareIcon aria-hidden="true" className="size-[1.15rem] text-accent" />
-          {shareLabel}
-        </button>
-        <button type="button" onClick={() => window.print()} className={cn(item, "border-x border-line")}>
-          <Printer aria-hidden="true" className="size-[1.15rem] text-accent" />
-          Print
-        </button>
-        {pdfHref ? (
-          <a href={pdfHref} download={pdfFileName} className={item}>
-            <Download aria-hidden="true" className="size-[1.15rem] text-accent" />
-            PDF
-          </a>
-        ) : null}
-        {status}
-      </div>
-    );
-  }
 
   const primary: ButtonVariant = variant === "stage" ? "stageSolid" : "primary";
   const secondary: ButtonVariant = variant === "stage" ? "stage" : "outline";

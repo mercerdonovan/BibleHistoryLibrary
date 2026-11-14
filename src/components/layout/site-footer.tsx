@@ -2,10 +2,12 @@ import Link from "next/link";
 
 import { SHARING_NOTICE_TITLE } from "@/components/sharing-notice";
 import { siteConfig } from "@/config/site";
-import { getTractsBySeries } from "@/lib/tracts";
+import { getAllBooks } from "@/lib/books";
+
+const footerLink = "link-underline text-[0.92rem] text-stage-muted transition-colors hover:text-stage-ink";
 
 export async function SiteFooter() {
-  const groups = await getTractsBySeries();
+  const books = await getAllBooks();
 
   return (
     <footer data-site-footer className="grain mt-28 bg-stage text-stage-ink">
@@ -29,33 +31,25 @@ export async function SiteFooter() {
             </p>
           </div>
 
-          <nav aria-label="Footer" className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3">
-            {groups.map(({ series, tracts }) => (
-              <div key={series.id}>
-                <h2 className="eyebrow text-[0.66rem] text-[#dab86e]">{series.title}</h2>
-                <ul className="mt-4 space-y-2.5">
-                  {tracts.map((tract) => (
-                    <li key={tract.slug}>
-                      <Link
-                        href={tract.href}
-                        className="link-underline text-[0.92rem] text-stage-muted transition-colors hover:text-stage-ink"
-                      >
-                        {tract.title}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+          <nav aria-label="Footer" className="grid grid-cols-2 gap-x-6 gap-y-10 sm:max-w-xl lg:justify-self-end lg:w-full">
+            <div>
+              <h2 className="eyebrow text-[0.66rem] text-[#dab86e]">Books</h2>
+              <ul className="mt-4 space-y-2.5">
+                {books.map((book) => (
+                  <li key={book.slug}>
+                    <Link href={book.href} className={footerLink}>
+                      {book.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
             <div>
               <h2 className="eyebrow text-[0.66rem] text-[#dab86e]">The Library</h2>
               <ul className="mt-4 space-y-2.5">
                 {siteConfig.nav.map((item) => (
                   <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className="link-underline text-[0.92rem] text-stage-muted transition-colors hover:text-stage-ink"
-                    >
+                    <Link href={item.href} className={footerLink}>
                       {item.label}
                     </Link>
                   </li>

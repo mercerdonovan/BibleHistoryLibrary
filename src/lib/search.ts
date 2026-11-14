@@ -1,4 +1,22 @@
-import type { SearchDocument, SearchPassage } from "@/lib/types";
+export interface SearchPassage {
+  /** Block anchor on the chapter page. */
+  anchor: string;
+  type: "paragraph" | "callout";
+  text: string;
+}
+
+/** One chapter of one book. */
+export interface SearchDocument {
+  id: string;
+  href: string;
+  bookTitle: string;
+  chapterLabel: string;
+  /** Chapter title as printed. */
+  title: string;
+  /** Book order, then chapter order. */
+  order: number;
+  passages: SearchPassage[];
+}
 
 export interface SearchHit {
   document: SearchDocument;
@@ -21,11 +39,7 @@ export function queryTerms(query: string): string[] {
 }
 
 const PASSAGE_WEIGHT: Record<SearchPassage["type"], number> = {
-  heading: 16,
-  question: 14,
-  label: 8,
-  scripture: 10,
-  note: 9,
+  callout: 12,
   paragraph: 9,
 };
 
@@ -36,9 +50,7 @@ export function searchDocuments(documents: SearchDocument[], query: string, pass
 
   const hits: SearchHit[] = [];
   for (const document of documents) {
-    const head = fold(`${document.title} ${document.series} ${document.description}`);
     const titleMatch = terms.every((term) => fold(document.title).includes(term));
-    const headMatch = terms.every((term) => head.includes(term));
 
     const scored = document.passages
       .map((passage) => {
@@ -50,14 +62,13 @@ export function searchDocuments(documents: SearchDocument[], query: string, pass
       .filter((entry): entry is { passage: SearchPassage; score: number } => entry !== null)
       .sort((a, b) => b.score - a.score);
 
-    if (!headMatch && scored.length === 0) continue;
+    if (!titleMatch && scored.length === 0) continue;
 
     hits.push({
       document,
       matchCount: scored.length,
       score:
         (titleMatch ? 120 : 0) +
-        (headMatch ? 30 : 0) +
         scored.slice(0, 8).reduce((total, entry) => total + entry.score, 0),
       passages: scored.slice(0, passagesPerHit).map((entry) => entry.passage),
     });

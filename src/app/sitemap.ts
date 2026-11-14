@@ -1,20 +1,17 @@
 import type { MetadataRoute } from "next";
 
 import { absoluteUrl } from "@/config/site";
-import { getAllBooks } from "@/lib/books";
-import { getAllTracts } from "@/lib/tracts";
+import { getAllBooks, getLastAdded } from "@/lib/books";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [tracts, books] = await Promise.all([getAllTracts(), getAllBooks()]);
-  const newest = tracts.reduce((latest, tract) => (tract.addedAt > latest ? tract.addedAt : latest), "");
+  const [books, lastAdded] = await Promise.all([getAllBooks(), getLastAdded()]);
 
   const pages: MetadataRoute.Sitemap = [
-    { url: absoluteUrl("/"), lastModified: newest, changeFrequency: "weekly", priority: 1 },
-    { url: absoluteUrl("/library"), lastModified: newest, changeFrequency: "weekly", priority: 0.9 },
+    { url: absoluteUrl("/"), lastModified: lastAdded, changeFrequency: "weekly", priority: 1 },
+    { url: absoluteUrl("/books"), lastModified: lastAdded, changeFrequency: "weekly", priority: 0.9 },
     { url: absoluteUrl("/search"), changeFrequency: "monthly", priority: 0.4 },
     { url: absoluteUrl("/about"), changeFrequency: "yearly", priority: 0.5 },
     { url: absoluteUrl("/contact"), changeFrequency: "yearly", priority: 0.5 },
-    { url: absoluteUrl("/books"), changeFrequency: "monthly", priority: 0.7 },
   ];
 
   const bookPages: MetadataRoute.Sitemap = books.flatMap((book) => [
@@ -28,14 +25,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ]);
 
-  return [
-    ...pages,
-    ...bookPages,
-    ...tracts.map((tract) => ({
-      url: absoluteUrl(tract.href),
-      lastModified: tract.addedAt,
-      changeFrequency: "yearly" as const,
-      priority: 0.8,
-    })),
-  ];
+  return [...pages, ...bookPages];
 }

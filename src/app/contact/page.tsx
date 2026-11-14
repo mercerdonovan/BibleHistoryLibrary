@@ -9,25 +9,25 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Order copies",
-  description: "Request printed tracts or additional copies from the Bible History Library by email.",
+  description: "Request printed copies of books from the Bible History Library by email.",
   path: "/contact",
 });
 
 const STEPS = [
-  { title: "Which tracts", text: "Tell us the titles you would like, or ask for the full set." },
-  { title: "How many", text: "A handful for friends or a stack for a display — say what you need." },
+  { title: "Which books", text: "Tell us the titles you would like." },
+  { title: "How many", text: "One copy for yourself or several to give away — say what you need." },
   { title: "Where to send them", text: "Include a postal address so we know where they are going." },
 ];
 
 export default function ContactPage() {
   const { contactEmail } = siteConfig;
-  const mailto = `mailto:${contactEmail}?subject=${encodeURIComponent("Printed tracts request")}`;
+  const mailto = `mailto:${contactEmail}?subject=${encodeURIComponent("Printed books request")}`;
 
   return (
     <>
       <PageIntro eyebrow="Contact" title="Order printed copies.">
         <p>
-          Would you like tracts to keep, to give away, or to restock a display? Write to us and we
+          Would you like a book to keep, to give away, or to read with others? Write to us and we
           will be glad to help.
         </p>
       </PageIntro>

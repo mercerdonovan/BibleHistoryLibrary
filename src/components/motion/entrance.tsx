@@ -2,25 +2,37 @@
 
 import { motion } from "motion/react";
 
+import { cn } from "@/lib/utils";
+
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-/** Headline that rises line by line out of a mask. */
-export function HeroHeadline({ lines, id }: { lines: string[]; id?: string }) {
+interface MaskedLinesProps {
+  lines: string[];
+  as?: "h1" | "h2";
+  id?: string;
+  className?: string;
+  /** Classes for the last line, e.g. an italic accent. */
+  lastLineClassName?: string;
+  delay?: number;
+}
+
+/** A display heading whose lines rise one by one out of a mask. */
+export function MaskedLines({ lines, as: Heading = "h1", id, className, lastLineClassName, delay = 0.1 }: MaskedLinesProps) {
   return (
-    <h1 id={id} className="display text-[clamp(2.9rem,8.4vw,6.4rem)] text-ink">
+    <Heading id={id} className={cn("display", className)}>
       {lines.map((line, index) => (
         <span key={line} className="block overflow-hidden pb-[0.12em]">
           <motion.span
-            className={index === lines.length - 1 ? "block italic text-burgundy" : "block"}
+            className={cn("block", index === lines.length - 1 && lines.length > 1 && lastLineClassName)}
             initial={{ y: "110%" }}
             animate={{ y: 0 }}
-            transition={{ duration: 1.1, ease: EASE, delay: 0.1 + index * 0.12 }}
+            transition={{ duration: 1.1, ease: EASE, delay: delay + index * 0.12 }}
           >
             {line}
           </motion.span>
         </span>
       ))}
-    </h1>
+    </Heading>
   );
 }
 

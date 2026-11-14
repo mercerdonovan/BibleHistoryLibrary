@@ -1,6 +1,7 @@
 # Bible History Library
 
-A public digital library for Bible study tracts: browse, read, share, print and download.
+A public digital library of Christian books: browse, read online chapter by
+chapter, search, share, print a chapter, and download the original PDF.
 
 Next.js (App Router) · TypeScript strict · Tailwind CSS v4 · Motion · deployed on Vercel.
 
@@ -27,57 +28,53 @@ production URL. Both fallbacks live in `src/config/site.ts`.
 
 ## Content model
 
-Two layers, kept apart on purpose:
+Two layers, kept apart on purpose, with one file per chapter so no page ships
+the whole book:
 
 | Layer | Where | Edited by |
 | --- | --- | --- |
-| **Canonical tract text** | `content/tracts/<slug>.json` | Generated from the PDF. Never by hand. |
-| **Presentation metadata** | `src/content/tracts.ts`, `src/content/series.ts` | You: display title, series, colours, cover motif, SEO description. |
+| **Canonical book text** | `content/books/<slug>/book.json` (chapters, cover text) and `content/books/<slug>/chapters/NN-slug.json` | Generated from the PDF. Never by hand. |
+| **Pictures, cover, PDF** | `public/book-assets/<slug>/` | Generated from the PDFs. |
+| **Presentation metadata** | `src/content/books.ts` | You: title, description, colours, picture alt text, artwork, search suggestions, home-page quotation. |
 
-`src/lib/tracts.ts` is the only module that knows the content is file-based.
+`src/lib/books.ts` is the only module that knows the content is file-based.
 Moving to a CMS such as Sanity means re-implementing those functions; no
 component changes.
 
-### Adding or updating a tract
+Routes: `/` (spotlight + shelf) → `/books` (every book) → `/books/<slug>`
+(about the book) → `/books/<slug>/read` (contents) →
+`/books/<slug>/read/<chapter>`. `/search` searches every chapter of every book.
 
-1. Put the PDF in `Doccuments/Tracts/` named `NN-slug.pdf` (`NN` sets the reading order).
+## Adding a book
+
+1. Put the book PDF and its cover PDF in `Doccuments/Books/` (and the Pages
+   document if there is one: it settles line-end hyphens).
 2. Extract and verify:
 
    ```bash
-   python3 -m venv .venv && .venv/bin/pip install pymupdf
-   .venv/bin/python scripts/extract_tracts.py
-   .venv/bin/python scripts/verify_tracts.py
+   python3 -m venv .venv && .venv/bin/pip install pymupdf pillow
+   .venv/bin/python scripts/extract_book.py
+   .venv/bin/python scripts/verify_book.py
    ```
 
-3. Add an entry for the slug in `src/content/tracts.ts`.
+   Both scripts are currently set up for **The End Times** (see `BOOK` at the
+   top of `extract_book.py` and `CONTENT_DIR` in `verify_book.py`). A new book
+   needs its own entry, and its page layout checked against the extractor's
+   assumptions (two columns, title and call-out sizes) before the output is
+   trusted.
 
-`extract_tracts.py` rejoins wrapped lines, records bold / italic / underline
-emphasis, and classifies each paragraph (heading, question, scripture, note).
-It does not change wording. `verify_tracts.py` re-reads each PDF through an
-independent path and fails if any character or word boundary differs.
+3. Add an entry to `bookMeta` in `src/content/books.ts`:
+   - `title`, `description`, `addedAt`, and a `theme` (accent + stage colours).
+   - `imageAlt`: a description of every picture, keyed by printed page.
+   - `artwork`: the pages whose pictures may also appear on chapter cards.
+     **Leave out any picture showing a cross or other religious symbol.**
+   - `searchSuggestions`: words or references that actually occur in the text.
+   - Optional `highlight`: one of the book's boxed quotations (chapter slug +
+     block anchor) to show on the home page. Set `featured: true` to put the
+     book in the home spotlight.
 
-The extractor also copies each PDF to `public/pdfs/<slug>.pdf` for the
-download button.
-
-## Books
-
-Books use the same two-layer model as tracts, with one file per chapter so no
-page ships the whole book.
-
-| Layer | Where |
-| --- | --- |
-| **Canonical book text** | `content/books/<slug>/book.json` (chapters, cover text) and `content/books/<slug>/chapters/NN-slug.json` |
-| **Pictures, cover, PDF** | `public/book-assets/<slug>/` (generated from the PDFs) |
-| **Presentation metadata** | `src/content/books.ts`: title, description, colours, picture alt text |
-
-Routes: `/books` (shelf) → `/books/<slug>` (about the book) →
-`/books/<slug>/read` (contents) → `/books/<slug>/read/<chapter>`.
-
-```bash
-.venv/bin/pip install pymupdf pillow
-.venv/bin/python scripts/extract_book.py
-.venv/bin/python scripts/verify_book.py
-```
+Everything else — shelf, chapter cards, search index, sitemap, share images,
+footer — picks the new book up automatically.
 
 `extract_book.py` reads the two-column pages in order, keeps the boxed
 quotations and full-page pictures where they fall, and takes the front cover
@@ -90,26 +87,27 @@ decision is listed in `content/books/<slug>/line-end-hyphens.txt`; entries
 marked `REVIEW` had no other instance in the book to confirm them. Change a
 decision in `KEEP_HYPHEN` at the top of `extract_book.py`.
 
-The reader remembers a visitor's place in `localStorage` only. Books are not
-yet included in the site search.
+The reader remembers a visitor's place and preferred text size in
+`localStorage` only.
 
 ## Where things live
 
 ```
-content/tracts/          canonical tract text (generated)
 content/books/           canonical book text, one file per chapter (generated)
+public/book-assets/      covers, pictures and PDFs (generated)
 scripts/                 PDF extraction + verification
 src/app/                 routes, metadata, sitemap, robots, share images
 src/config/site.ts       site name, URL, contact email, navigation
-src/content/             series + per-tract presentation metadata
+src/content/books.ts     per-book presentation metadata
 src/lib/                 data access, search, SEO helpers, types
 src/components/
+  book/                  cover, stage, shelf, chapter cards, reader body,
+                         contents, progress, resume, text size, quotation
   layout/                header, footer, navigation, theme
-  tract/                 covers, cards, rails, index list
-  reader/                tract body, progress, section nav, share/print/PDF
-  book/                  cover, chapter body, contents, progress, resume
-  library/ search/       browsing and full-text search
-  motion/                reveal primitives
+  reader/                share / print / PDF actions
+  search/                full-text search
+  motion/                entrance and reveal primitives
+  ui/                    buttons, rail, copy button
 src/app/globals.css      design tokens, reading typography, print styles
 ```
 
@@ -117,11 +115,13 @@ src/app/globals.css      design tokens, reading typography, print styles
 
 - **Type:** Fraunces (display), Newsreader (reading), Hanken Grotesk (interface).
 - **Colour:** navy, cream, burgundy and gold tokens for light and dark, defined
-  at the top of `globals.css`. Each tract adds its own accent and cover wash in
-  `src/content/tracts.ts`.
-- **Covers** are typographic with an abstract generated motif
-  (`src/components/tract/cover-motif.tsx`) until artwork exists.
+  at the top of `globals.css`. Each book adds its own accent and stage colours
+  in `src/content/books.ts`; its stage is lit by a softened copy of its cover.
+- **Home:** the featured book on a lit stage (on phones the cover sits beside
+  the title so **Read Book** is visible without scrolling), its chapters as a
+  row of cards, one of its quotations, and the shelf.
 - **Motion** uses transforms and opacity only. Reading-page effects are
   scroll-driven CSS behind `@supports` and `prefers-reduced-motion`, so text is
   never hidden or delayed.
-- **Print** styles strip the interface and set the tract in plain black type.
+- **Print** styles strip the interface and set a chapter in plain black type,
+  with a note pointing to the PDF for an exact copy.

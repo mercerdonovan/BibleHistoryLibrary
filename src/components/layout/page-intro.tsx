@@ -1,4 +1,4 @@
-import { HeroFade } from "@/components/home/hero-copy";
+import { HeroFade } from "@/components/motion/entrance";
 import { cn } from "@/lib/utils";
 
 interface PageIntroProps {

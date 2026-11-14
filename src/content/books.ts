@@ -1,7 +1,7 @@
 import type { BookMeta } from "@/lib/book-types";
 
 /**
- * Presentation metadata for each book.
+ * Presentation metadata for each book, in shelf order.
  *
  * Supporting site copy and art direction only. The book's wording lives in
  * content/books/<slug>/ and is generated from the source PDF by
@@ -14,6 +14,7 @@ export const bookMeta: BookMeta[] = [
     description:
       "From the persecutions of the first centuries, through the Reformation, to the last conflict and the return of Christ: eighteen chapters on the history of the church and what Scripture says is still to come.",
     addedAt: "2026-10-03",
+    featured: true,
     theme: {
       accent: { light: "#85591a", dark: "#e5c173" },
       stage: { from: "#17204a", to: "#05070f", glow: "#d9b56c" },
@@ -32,5 +33,18 @@ export const bookMeta: BookMeta[] = [
       90: "Painting of a kneeling man clinging to a figure in white robes on a hillside beneath a stormy sky.",
       98: "Painting of a crowd looking up toward a radiant figure descending in bright light, surrounded by angels.",
     },
+    // Pages 32, 38 and 75 show a cross or church spires, so they stay in the reader only.
+    artwork: [2, 12, 24, 48, 62, 70, 80, 90, 98],
+    searchSuggestions: [
+      "Luther",
+      "Waldenses",
+      "Wycliffe",
+      "Sabbath",
+      "Reformation",
+      "mark of the beast",
+      "Revelation 14",
+      "time of trouble",
+    ],
+    highlight: { chapter: "the-early-reformers", anchor: "b24" },
   },
 ];

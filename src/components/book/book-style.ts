@@ -8,8 +8,11 @@ export function bookAccentStyle(book: Pick<Book, "theme">): React.CSSProperties 
   } as React.CSSProperties;
 }
 
-/** Background for a book's dark "stage" surfaces. */
-export function bookStageBackground({ theme }: Pick<Book, "theme">): string {
+/** Background and glow colour for a book's dark "stage" surfaces. */
+export function bookStageStyle({ theme }: Pick<Book, "theme">): React.CSSProperties {
   const { from, to, glow } = theme.stage;
-  return `radial-gradient(70% 90% at 82% 0%, ${glow}2e, transparent 62%), linear-gradient(155deg, ${from}, ${to} 82%)`;
+  return {
+    "--stage-glow": glow,
+    background: `radial-gradient(70% 90% at 82% 0%, ${glow}2e, transparent 62%), linear-gradient(155deg, ${from}, ${to} 82%)`,
+  } as React.CSSProperties;
 }
